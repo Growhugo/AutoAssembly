@@ -1,7 +1,7 @@
 import { ScrapedItem } from "./types";
 
 const GEMINI_API_BASE =
-  "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent";
+  "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent";
 
 const SYSTEM_INSTRUCTION = `You are an assistant for student council members at Coláiste Chraobh Abhann (CCA), a secondary school in Kilcoole, Co. Wicklow, Ireland. Your job is to take raw scraped data from the school's web presence and produce a structured assembly report that student council members can read aloud during school assemblies.
 
