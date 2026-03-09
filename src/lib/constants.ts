@@ -30,14 +30,12 @@ export const TOPIC_CATEGORIES: TopicCategory[] = [
 
 export const SOURCE_LABELS: Record<string, string> = {
   "school-website": "School Website",
-  instagram: "Instagram",
   facebook: "Facebook",
   general: "Other Sources",
 };
 
 export const SOURCE_COLORS: Record<string, string> = {
   "school-website": "bg-cca-blue text-white",
-  instagram: "bg-pink-600 text-white",
   facebook: "bg-blue-600 text-white",
   general: "bg-gray-500 text-white",
 };

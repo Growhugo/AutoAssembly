@@ -19,7 +19,6 @@ type Phase = "idle" | "scraping" | "summarizing" | "done" | "error";
 
 const SCRAPE_SOURCES = [
   { endpoint: "/api/scrape/school-website", source: "school-website", label: "School Website" },
-  { endpoint: "/api/scrape/instagram", source: "instagram", label: "Instagram" },
   { endpoint: "/api/scrape/facebook", source: "facebook", label: "Facebook" },
   { endpoint: "/api/scrape/general", source: "general", label: "Other Sources" },
 ] as const;
@@ -135,7 +134,6 @@ export default function Home() {
 
     const bySource = {
       schoolWebsite: collectedItems.filter((i) => i.source === "school-website"),
-      instagram: collectedItems.filter((i) => i.source === "instagram"),
       facebook: collectedItems.filter((i) => i.source === "facebook"),
       general: collectedItems.filter((i) => i.source === "general"),
     };

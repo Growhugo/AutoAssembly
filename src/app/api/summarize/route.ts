@@ -15,7 +15,6 @@ export async function POST(req: NextRequest) {
 
   const totalItems = [
     ...(body.schoolWebsite ?? []),
-    ...(body.instagram ?? []),
     ...(body.facebook ?? []),
     ...(body.general ?? []),
   ].length;
@@ -31,7 +30,6 @@ export async function POST(req: NextRequest) {
     const reportJson = await generateAssemblyReport(
       {
         schoolWebsite: body.schoolWebsite ?? [],
-        instagram: body.instagram ?? [],
         facebook: body.facebook ?? [],
         general: body.general ?? [],
       },

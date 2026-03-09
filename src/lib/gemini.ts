@@ -19,7 +19,6 @@ IMPORTANT RULES:
 function buildPrompt(
   scrapedData: {
     schoolWebsite: ScrapedItem[];
-    instagram: ScrapedItem[];
     facebook: ScrapedItem[];
     general: ScrapedItem[];
   },
@@ -43,9 +42,6 @@ Below is all the content scraped from the school's web presence. Each item has a
 
 === SCHOOL WEBSITE (colaisteca.ie) ===
 ${formatItems(scrapedData.schoolWebsite)}
-
-=== INSTAGRAM (@ccakilcoole) ===
-${formatItems(scrapedData.instagram)}
 
 === FACEBOOK (CCA Kilcoole) ===
 ${formatItems(scrapedData.facebook)}
@@ -105,7 +101,6 @@ IMPORTANT: Only return valid JSON. sourceNumbers should reference the item numbe
 export async function generateAssemblyReport(
   scrapedData: {
     schoolWebsite: ScrapedItem[];
-    instagram: ScrapedItem[];
     facebook: ScrapedItem[];
     general: ScrapedItem[];
   },
