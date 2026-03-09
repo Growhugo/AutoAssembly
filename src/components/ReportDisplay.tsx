@@ -18,7 +18,8 @@ export default function ReportDisplay({
   onReset,
 }: ReportDisplayProps) {
   // Filter sections: show selected year + General
-  const filteredSections = report.sections.filter(
+  const sections = report.sections ?? [];
+  const filteredSections = sections.filter(
     (s) =>
       s.yearGroup === "General / Whole School" || s.yearGroup === selectedYear
   );
@@ -30,7 +31,7 @@ export default function ReportDisplay({
     return 0;
   });
 
-  const hasContent = filteredSections.some((s) => s.items.length > 0);
+  const hasContent = filteredSections.some((s) => (s.items ?? []).length > 0);
 
   return (
     <div className="space-y-4">

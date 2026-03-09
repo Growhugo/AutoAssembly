@@ -1,5 +1,5 @@
 import { NextRequest } from "next/server";
-import { streamAssemblyReport } from "@/lib/gemini";
+import { generateAssemblyReport } from "@/lib/gemini";
 
 export const maxDuration = 60;
 
@@ -27,34 +27,28 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const encoder = new TextEncoder();
-  const stream = new ReadableStream({
-    async start(controller) {
-      try {
-        for await (const chunk of streamAssemblyReport(
-          {
-            schoolWebsite: body.schoolWebsite ?? [],
-            instagram: body.instagram ?? [],
-            facebook: body.facebook ?? [],
-            general: body.general ?? [],
-          },
-          body.dateRange
-        )) {
-          controller.enqueue(encoder.encode(chunk));
-        }
-        controller.close();
-      } catch (error) {
-        const message = error instanceof Error ? error.message : "AI generation failed";
-        controller.enqueue(encoder.encode(JSON.stringify({ error: message })));
-        controller.close();
-      }
-    },
-  });
+  try {
+    const reportJson = await generateAssemblyReport(
+      {
+        schoolWebsite: body.schoolWebsite ?? [],
+        instagram: body.instagram ?? [],
+        facebook: body.facebook ?? [],
+        general: body.general ?? [],
+      },
+      body.dateRange
+    );
 
-  return new Response(stream, {
-    headers: {
-      "Content-Type": "text/plain; charset=utf-8",
-      "Cache-Control": "no-cache",
-    },
-  });
+    return new Response(reportJson, {
+      headers: {
+        "Content-Type": "application/json",
+        "Cache-Control": "no-cache",
+      },
+    });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "AI generation failed";
+    return new Response(JSON.stringify({ error: message }), {
+      status: 500,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
 }

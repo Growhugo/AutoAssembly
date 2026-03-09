@@ -153,23 +153,17 @@ export default function Home() {
         }),
       });
 
+      const data = await res.json();
+
       if (!res.ok) {
-        const errData = await res.json().catch(() => ({ error: "AI generation failed" }));
-        throw new Error(errData.error);
+        throw new Error(data.error || "AI generation failed");
       }
 
-      const reader = res.body!.getReader();
-      const decoder = new TextDecoder();
-      let fullText = "";
-
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        fullText += decoder.decode(value, { stream: true });
-      }
-
-      const parsed: AssemblyReport = JSON.parse(fullText);
-      setReport(parsed);
+      const validatedReport: AssemblyReport = {
+        title: data.title || "CCA Assembly Report",
+        sections: Array.isArray(data.sections) ? data.sections : [],
+      };
+      setReport(validatedReport);
       setSummarizing(false);
       setPhase("done");
     } catch (err) {

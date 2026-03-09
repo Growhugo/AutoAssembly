@@ -1,7 +1,7 @@
 import { ScrapedItem } from "./types";
 
 const GEMINI_API_BASE =
-  "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:streamGenerateContent";
+  "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent";
 
 const SYSTEM_INSTRUCTION = `You are an assistant for student council members at Coláiste Chraobh Abhann (CCA), a secondary school in Kilcoole, Co. Wicklow, Ireland. Your job is to take raw scraped data from the school's web presence and produce a structured assembly report that student council members can read aloud during school assemblies.
 
@@ -102,7 +102,7 @@ Rules for categorization:
 IMPORTANT: Only return valid JSON. sourceNumbers should reference the item numbers from the data above so the UI can link back to original sources.`;
 }
 
-export async function* streamAssemblyReport(
+export async function generateAssemblyReport(
   scrapedData: {
     schoolWebsite: ScrapedItem[];
     instagram: ScrapedItem[];
@@ -110,7 +110,7 @@ export async function* streamAssemblyReport(
     general: ScrapedItem[];
   },
   dateRange: { from: string; to: string }
-): AsyncGenerator<string> {
+): Promise<string> {
   const prompt = buildPrompt(scrapedData, dateRange);
 
   const requestBody = {
@@ -128,7 +128,7 @@ export async function* streamAssemblyReport(
     },
   };
 
-  const url = `${GEMINI_API_BASE}?alt=sse&key=${process.env.GEMINI_API_KEY}`;
+  const url = `${GEMINI_API_BASE}?key=${process.env.GEMINI_API_KEY}`;
 
   const response = await fetch(url, {
     method: "POST",
@@ -141,44 +141,12 @@ export async function* streamAssemblyReport(
     throw new Error(`Gemini API error ${response.status}: ${errorText}`);
   }
 
-  const reader = response.body!.getReader();
-  const decoder = new TextDecoder();
-  let buffer = "";
+  const data = await response.json();
+  const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
 
-  while (true) {
-    const { done, value } = await reader.read();
-    if (done) break;
-
-    buffer += decoder.decode(value, { stream: true });
-    const lines = buffer.split("\n");
-    buffer = lines.pop() ?? "";
-
-    for (const line of lines) {
-      if (line.startsWith("data: ")) {
-        const jsonStr = line.slice(6).trim();
-        if (!jsonStr || jsonStr === "[DONE]") continue;
-        try {
-          const parsed = JSON.parse(jsonStr);
-          const text = parsed.candidates?.[0]?.content?.parts?.[0]?.text;
-          if (text) yield text;
-        } catch {
-          // skip malformed chunks
-        }
-      }
-    }
+  if (!text) {
+    throw new Error("Gemini returned no content");
   }
 
-  // process remaining buffer
-  if (buffer.startsWith("data: ")) {
-    const jsonStr = buffer.slice(6).trim();
-    if (jsonStr && jsonStr !== "[DONE]") {
-      try {
-        const parsed = JSON.parse(jsonStr);
-        const text = parsed.candidates?.[0]?.content?.parts?.[0]?.text;
-        if (text) yield text;
-      } catch {
-        // skip
-      }
-    }
-  }
+  return text;
 }
