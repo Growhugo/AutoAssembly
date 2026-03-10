@@ -18,6 +18,25 @@ export const ASSEMBLY_DAYS: Record<YearGroup, { day: string; dayIndex: number; l
   "6th Year": { day: "Friday", dayIndex: 5, location: "The GP Area" },
 };
 
+// Cycle groupings — controls which sections a year group can see
+export type Cycle = "junior" | "ty" | "senior";
+
+export const YEAR_TO_CYCLE: Record<YearGroup, Cycle> = {
+  "1st Year": "junior",
+  "2nd Year": "junior",
+  "3rd Year": "junior",
+  "4th Year (TY)": "ty",
+  "5th Year": "senior",
+  "6th Year": "senior",
+};
+
+// Which yearGroup labels in the report are visible to each cycle
+export const CYCLE_VISIBLE_SECTIONS: Record<Cycle, string[]> = {
+  junior: ["1st Year", "2nd Year", "3rd Year", "Junior Cycle (General)", "General / Whole School"],
+  ty: ["4th Year (TY)", "Transition Year (General)", "General / Whole School"],
+  senior: ["5th Year", "6th Year", "Senior Cycle (General)", "General / Whole School"],
+};
+
 export const TOPIC_CATEGORIES: TopicCategory[] = [
   "Sports Results & Fixtures",
   "Upcoming Events",

@@ -1,6 +1,7 @@
 "use client";
 
 import { AssemblyReport, ScrapedItem, YearGroup } from "@/lib/types";
+import { YEAR_TO_CYCLE, CYCLE_VISIBLE_SECTIONS } from "@/lib/constants";
 import ReportSection from "./ReportSection";
 import CopyButton from "./CopyButton";
 
@@ -17,17 +18,21 @@ export default function ReportDisplay({
   allScrapedItems,
   onReset,
 }: ReportDisplayProps) {
-  // Filter sections: show selected year + General
   const sections = report.sections ?? [];
+  const cycle = YEAR_TO_CYCLE[selectedYear];
+  const visibleLabels = CYCLE_VISIBLE_SECTIONS[cycle];
+
+  // Only show sections that belong to this year's cycle
   const filteredSections = sections.filter(
-    (s) =>
-      s.yearGroup === "General / Whole School" || s.yearGroup === selectedYear
+    (s) => visibleLabels.includes(s.yearGroup) || s.yearGroup === selectedYear
   );
 
-  // Sort: General first, then the selected year
+  // Sort: General/Whole School first, then cycle general, then specific year
   filteredSections.sort((a, b) => {
     if (a.yearGroup === "General / Whole School") return -1;
     if (b.yearGroup === "General / Whole School") return 1;
+    if (a.yearGroup.includes("(General)")) return -1;
+    if (b.yearGroup.includes("(General)")) return 1;
     return 0;
   });
 
