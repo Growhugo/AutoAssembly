@@ -3,7 +3,7 @@ export interface ScrapedItem {
   snippet: string;
   link: string;
   date?: string;
-  source: "school-website" | "facebook" | "general";
+  source: "school-website" | "facebook" | "general" | "teams";
 }
 
 export interface ScrapeResponse {

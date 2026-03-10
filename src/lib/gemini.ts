@@ -48,6 +48,7 @@ function buildPrompt(
   scrapedData: {
     schoolWebsite: ScrapedItem[];
     facebook: ScrapedItem[];
+    teams: ScrapedItem[];
     general: ScrapedItem[];
   },
   dateRange: { from: string; to: string }
@@ -73,6 +74,9 @@ ${formatItems(scrapedData.schoolWebsite)}
 
 === FACEBOOK (CCA Kilcoole) ===
 ${formatItems(scrapedData.facebook)}
+
+=== TEAMS CHANNEL (Student Leadership 25/26) ===
+${formatItems(scrapedData.teams)}
 
 === OTHER SOURCES (news, sports orgs, etc.) ===
 ${formatItems(scrapedData.general)}
@@ -139,6 +143,7 @@ export async function generateAssemblyReport(
   scrapedData: {
     schoolWebsite: ScrapedItem[];
     facebook: ScrapedItem[];
+    teams: ScrapedItem[];
     general: ScrapedItem[];
   },
   dateRange: { from: string; to: string }

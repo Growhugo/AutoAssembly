@@ -121,6 +121,19 @@ export default function Home() {
       }
     });
 
+    // Fetch stored Teams data (silently, alongside scraped data)
+    let teamsItems: ScrapedItem[] = [];
+    try {
+      const teamsRes = await fetch("/api/teams-data");
+      const teamsData = await teamsRes.json();
+      teamsItems = teamsData.items ?? [];
+      if (teamsItems.length > 0) {
+        collectedItems.push(...teamsItems);
+      }
+    } catch {
+      // Teams data is optional — don't block report generation
+    }
+
     setAllScrapedItems(collectedItems);
     setWarnings(newWarnings);
 
@@ -135,6 +148,7 @@ export default function Home() {
     const bySource = {
       schoolWebsite: collectedItems.filter((i) => i.source === "school-website"),
       facebook: collectedItems.filter((i) => i.source === "facebook"),
+      teams: collectedItems.filter((i) => i.source === "teams"),
       general: collectedItems.filter((i) => i.source === "general"),
     };
 

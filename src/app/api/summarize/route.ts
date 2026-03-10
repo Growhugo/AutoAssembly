@@ -17,6 +17,7 @@ export async function POST(req: NextRequest) {
   const totalItems = [
     ...(body.schoolWebsite ?? []),
     ...(body.facebook ?? []),
+    ...(body.teams ?? []),
     ...(body.general ?? []),
   ].length;
 
@@ -32,6 +33,7 @@ export async function POST(req: NextRequest) {
       {
         schoolWebsite: body.schoolWebsite ?? [],
         facebook: body.facebook ?? [],
+        teams: body.teams ?? [],
         general: body.general ?? [],
       },
       body.dateRange
