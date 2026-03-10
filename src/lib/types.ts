@@ -3,7 +3,7 @@ export interface ScrapedItem {
   snippet: string;
   link: string;
   date?: string;
-  source: "school-website" | "instagram" | "facebook" | "general";
+  source: "school-website" | "facebook" | "general";
 }
 
 export interface ScrapeResponse {
@@ -51,3 +51,16 @@ export interface AssemblyReport {
   title: string;
   sections: ReportSection[];
 }
+
+// Future: Teams integration types
+// GUARDRAIL: Teams access must be READ-ONLY. See CLAUDE.md.
+export interface TeamsChannelMessage {
+  id: string;
+  content: string;
+  channelName: string;
+  teamName: string;
+  createdDateTime: string;
+  // NOTE: sender info intentionally excluded to prevent PII in reports
+}
+
+export type TeamsDataSource = "teams-announcement" | "teams-channel";

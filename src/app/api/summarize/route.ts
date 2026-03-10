@@ -1,5 +1,6 @@
 import { NextRequest } from "next/server";
 import { generateAssemblyReport } from "@/lib/gemini";
+import { sanitizeReportOutput } from "@/lib/guardrails";
 
 export const maxDuration = 60;
 
@@ -36,7 +37,22 @@ export async function POST(req: NextRequest) {
       body.dateRange
     );
 
-    return new Response(reportJson, {
+    // GUARDRAIL: Validate AI output before returning to client
+    const { sanitized, redactions, blocked, blockReason } = sanitizeReportOutput(reportJson);
+
+    if (blocked) {
+      console.error("[GUARDRAIL] AI output blocked:", blockReason);
+      return new Response(
+        JSON.stringify({ error: "The AI generated an unusual response. Please try again." }),
+        { status: 500, headers: { "Content-Type": "application/json" } }
+      );
+    }
+
+    if (redactions.length > 0) {
+      console.warn("[GUARDRAIL] PII redacted from AI output:", redactions);
+    }
+
+    return new Response(sanitized, {
       headers: {
         "Content-Type": "application/json",
         "Cache-Control": "no-cache",
